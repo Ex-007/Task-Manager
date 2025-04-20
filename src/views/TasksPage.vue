@@ -3,7 +3,7 @@
     <ion-header>
       <ion-toolbar color="primary">
         <ion-title>My Tasks</ion-title>
-        <ion-note slot="end" class="ion-padding-end">{{ userEmail }}</ion-note>
+        <ion-note slot="end" class="ion-padding-end">{{ userName }}</ion-note>
         <ion-buttons slot="end">
           <ion-button @click="router.push('/settings')">
             <ion-icon :icon="settingsOutline"></ion-icon>
@@ -104,7 +104,7 @@ const searchQuery = ref('');
 const activeFilter = ref('all');
 const { showSuccess, showError } = useToast();
 const signedUser = ref('')
-const userEmail = ref('')
+const userName = ref('')
 
 const filteredTasks = computed(() => {
   let result = tasks.value;
@@ -145,11 +145,10 @@ const userDet = async () => {
     const { data, error } = await supabase.auth.getUser();
     if (error) throw error;
     signedUser.value = data.user.id;
-    userEmail.value = data.user.email; // Store the email
-    console.log("Current user:", data.user.email, data.user.id);
+    userName.value = data.user.user_metadata.name;
+    // console.log(data.user.user_metadata.name)
     return data.user.id;
   } catch (err) {
-    console.log(err.message);
     showError('Failed to load user data');
     return null;
   }
@@ -175,7 +174,7 @@ const fetchTasks = async (userId) => {
     if (error) throw error;
     
     tasks.value = data || [];
-    console.log(`Fetched ${tasks.value.length} tasks for user ${userId}`);
+    // console.log(`Fetched ${tasks.value.length} tasks for user ${userId}`);
   } catch (error) {
     console.log(error)
     showError('Failed to load tasks');
